@@ -1,0 +1,12 @@
+idf_component_register(
+    SRCS
+        "main.c"
+        "imu_sensor.c"
+        "pid_controller.c"
+        "motor_control.c"
+        "wifi_controller.c"
+        "flight_controller.c"
+        "battery_monitor.c"
+    INCLUDE_DIRS
+        "."
+)

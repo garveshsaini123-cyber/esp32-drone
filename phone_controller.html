@@ -1,0 +1,65 @@
+/**
+ * ============================================================================
+ *  SkyPilot Drone - PID Controller Header
+ * ============================================================================
+ *  Generic PID controller with integral windup protection
+ *  and derivative filtering. Used for roll, pitch, and yaw stabilization.
+ * ============================================================================
+ */
+
+#ifndef PID_CONTROLLER_H
+#define PID_CONTROLLER_H
+
+#include "config.h"
+
+/**
+ * PID controller state structure.
+ */
+typedef struct {
+    float kp;               /* Proportional gain */
+    float ki;               /* Integral gain */
+    float kd;               /* Derivative gain */
+
+    float setpoint;         /* Desired value */
+    float integral;         /* Accumulated integral */
+    float prev_error;       /* Previous error for derivative */
+    float output;           /* Last computed output */
+
+    float output_min;       /* Output lower limit */
+    float output_max;       /* Output upper limit */
+    float integral_min;     /* Integral windup lower limit */
+    float integral_max;     /* Integral windup upper limit */
+} pid_t;
+
+/**
+ * Initialize a PID controller with the given gains and limits.
+ */
+void pid_init(pid_t *pid, float kp, float ki, float kd,
+              float output_min, float output_max,
+              float integral_min, float integral_max);
+
+/**
+ * Compute the PID output for the given measurement.
+ * @param pid         Pointer to the PID state.
+ * @param measurement Current measured value.
+ * @param dt          Time delta in seconds.
+ * @return            The PID correction output.
+ */
+float pid_compute(pid_t *pid, float measurement, float dt);
+
+/**
+ * Reset the PID controller (clear integral and derivative state).
+ */
+void pid_reset(pid_t *pid);
+
+/**
+ * Update PID gains at runtime (e.g., from a tuning interface).
+ */
+void pid_set_gains(pid_t *pid, float kp, float ki, float kd);
+
+/**
+ * Set a new setpoint (desired target value).
+ */
+void pid_set_setpoint(pid_t *pid, float setpoint);
+
+#endif /* PID_CONTROLLER_H */

@@ -1,0 +1,49 @@
+/**
+ * ============================================================================
+ *  SkyPilot Drone - WiFi Controller Header
+ * ============================================================================
+ *  Sets up ESP32 as a WiFi Access Point and runs a UDP server
+ *  to receive control commands from the phone app.
+ *  Also serves a web-based controller page via HTTP.
+ * ============================================================================
+ */
+
+#ifndef WIFI_CONTROLLER_H
+#define WIFI_CONTROLLER_H
+
+#include "config.h"
+#include "esp_err.h"
+
+/**
+ * Initialize WiFi in Access Point mode and start the UDP listener task.
+ * @return ESP_OK on success.
+ */
+esp_err_t wifi_controller_init(void);
+
+/**
+ * Get the latest control input received from the phone.
+ * Thread-safe (uses mutex internally).
+ * @param input Pointer to control_input_t to fill with latest data.
+ * @return ESP_OK if fresh data available, ESP_ERR_TIMEOUT if stale.
+ */
+esp_err_t wifi_get_control_input(control_input_t *input);
+
+/**
+ * Check if the phone controller is currently connected.
+ * @return true if packets received within UDP_TIMEOUT_MS.
+ */
+bool wifi_is_connected(void);
+
+/**
+ * Get the number of milliseconds since the last valid packet.
+ * @return Milliseconds since last packet.
+ */
+uint32_t wifi_get_last_packet_age_ms(void);
+
+/**
+ * Start the HTTP web server to serve the phone controller page.
+ * @return ESP_OK on success.
+ */
+esp_err_t wifi_start_web_server(void);
+
+#endif /* WIFI_CONTROLLER_H */
